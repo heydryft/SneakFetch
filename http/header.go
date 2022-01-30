@@ -5,10 +5,10 @@
 package http
 
 import (
-	"fmt"
 	"io"
 	"math/rand"
 	"net/textproto"
+	"sneakfetch/config"
 	"sneakfetch/http/httptrace"
 	"sort"
 	"strings"
@@ -209,22 +209,22 @@ func addChromeHeaders(kvs []keyValues) []keyValues {
 		return []keyValues{
 			{key: "Connection", values: []string{"keep-alive"}},
 			{key: "User-Agent", values: []string{values["x-user-agent"]}},
+			{key: "Proxy-Authorization", values: []string{values["x-proxy-authorization"]}},
 		}
 	}
 	newKvs := []keyValues{
 		{key: "Connection", values: []string{"keep-alive"}},
-		{key: "sec-ch-ua", values: []string{"\"Chromium\";v=\"91\", \" Not A;Brand\";v=\"99\", \"Google Chrome\";v=\"91\""}},
+		{key: "sec-ch-ua", values: []string{config.Sec_CH_UA}},
 		{key: "sec-ch-ua-mobile", values: []string{"?0"}},
-		{key: "Upgrade-Insecure-Requests", values: []string{"1"}},
-		{key: "User-Agent", values: []string{"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4469.0 Safari/537.36"}},
-		{key: "Accept", values: []string{"text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9"}},
-		{key: "Sec-Fetch-Site", values: []string{"none"}},
-		{key: "Sec-Fetch-Mode", values: []string{"navigate"}},
+		{key: "User-Agent", values: []string{config.DefaultUserAgent}},
+		{key: "Accept", values: []string{config.Accept}},
+		{key: "Sec-Fetch-Site", values: []string{config.Sec_Fetch_Site}},
+		{key: "Sec-Fetch-Mode", values: []string{config.Sec_Fetch_Mode}},
 		{key: "Sec-Fetch-User", values: []string{"?1"}},
-		{key: "Sec-Fetch-Dest", values: []string{"document"}},
-		{key: "Accept-Encoding", values: []string{"gzip, deflate, br"}},
-		{key: "Accept-Language", values: []string{"en-US,en;q=0.9,it;q=0.8"}},
-		{key: "If-None-Match", values: []string{fmt.Sprintf(`W/"2a6-%s/%s"`, randStr(11), randStr(15))}},
+		{key: "Sec-Fetch-Dest", values: []string{config.Sec_Fetch_Dest}},
+		{key: "Accept-Encoding", values: []string{config.AcceptEncoding}},
+		{key: "Accept-Language", values: []string{config.AcceptLanguage}},
+		// {key: "If-None-Match", values: []string{fmt.Sprintf(`W/"2a6-%s/%s"`, randStr(11), randStr(15))}},
 	}
 	for _, kv := range kvs {
 		if strings.ToLower(kv.key) == "connection" {
@@ -233,26 +233,22 @@ func addChromeHeaders(kvs []keyValues) []keyValues {
 			newKvs[1].values = kv.values
 		} else if strings.ToLower(kv.key) == "sec-ch-ua-mobile" {
 			newKvs[2].values = kv.values
-		} else if strings.ToLower(kv.key) == "upgrade-insecure-requests" {
-			newKvs[3].values = kv.values
 		} else if strings.ToLower(kv.key) == "user-agent" {
-			newKvs[4].values = kv.values
+			newKvs[3].values = kv.values
 		} else if strings.ToLower(kv.key) == "accept" {
-			newKvs[5].values = kv.values
+			newKvs[4].values = kv.values
 		} else if strings.ToLower(kv.key) == "sec-fetch-site" {
-			newKvs[6].values = kv.values
+			newKvs[5].values = kv.values
 		} else if strings.ToLower(kv.key) == "sec-fetch-mode" {
-			newKvs[7].values = kv.values
+			newKvs[6].values = kv.values
 		} else if strings.ToLower(kv.key) == "sec-fetch-user" {
-			newKvs[8].values = kv.values
+			newKvs[7].values = kv.values
 		} else if strings.ToLower(kv.key) == "sec-fetch-dest" {
-			newKvs[9].values = kv.values
+			newKvs[8].values = kv.values
 		} else if strings.ToLower(kv.key) == "accept-encoding" {
-			newKvs[10].values = kv.values
+			newKvs[9].values = kv.values
 		} else if strings.ToLower(kv.key) == "accept-language" {
-			newKvs[11].values = kv.values
-		} else if strings.ToLower(kv.key) == "if-none-match" {
-			newKvs[12].values = kv.values
+			newKvs[10].values = kv.values
 		} else {
 			newKvs = append(newKvs, kv)
 		}

@@ -1,13 +1,12 @@
 module sneakfetch
 
-go 1.16
+go 1.17
 
 require (
-	github.com/dsnet/compress v0.0.1 // indirect
-	github.com/google/uuid v1.3.0
-	github.com/hhsnopek/etag v0.0.0-20171206181245-aea95f647346 // indirect
-	github.com/refraction-networking/utls v0.0.0-20210713165636-0b2885c8c0d4
-	gitlab.com/yawning/bsaes.git v0.0.0-20190805113838-0a714cd429ec // indirect
-	golang.org/x/crypto v0.0.0-20210813211128-0a44fdfbc16e // indirect
-	golang.org/x/net v0.0.0-20210226172049-e18ecbb05110
+	github.com/dsnet/compress v0.0.1
+	gitlab.com/yawning/bsaes.git v0.0.0-20190805113838-0a714cd429ec
+	golang.org/x/crypto v0.0.0-20220126234351-aa10faf2a1f8
+	golang.org/x/net v0.0.0-20220121210141-e204ce36a2ba
+	golang.org/x/sys v0.0.0-20220114195835-da31bd327af9 // indirect
+	golang.org/x/text v0.3.7 // indirect
 )

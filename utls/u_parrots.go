@@ -324,7 +324,7 @@ func utlsIdToSpec(id ClientHelloID) (ClientHelloSpec, error) {
 					0x00, // pointFormatUncompressed
 				}},
 				&SessionTicketExtension{},
-				&ALPNExtension{AlpnProtocols: []string{"http/1.1"}},
+				&ALPNExtension{AlpnProtocols: []string{"h2", "http/1.1"}},
 				&StatusRequestExtension{},
 				&SignatureAlgorithmsExtension{SupportedSignatureAlgorithms: []SignatureScheme{
 					ECDSAWithP256AndSHA256,
@@ -354,8 +354,11 @@ func utlsIdToSpec(id ClientHelloID) (ClientHelloSpec, error) {
 				&CompressCertificateExtension{[]CertCompressionAlgo{
 					CertCompressionBrotli,
 				}},
+				&GenericExtension{Id: 0x4469, Data: []byte{0, 3, 2, 104, 50}},
 				&UtlsGREASEExtension{},
-				&UtlsPaddingExtension{GetPaddingLen: BoringPaddingStyle},
+				&UtlsPaddingExtension{GetPaddingLen: func(unpaddedLen int) (int, bool) {
+					return 1, true
+				}},
 			},
 		}, nil
 	case HelloFirefox_55, HelloFirefox_56:

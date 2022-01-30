@@ -362,7 +362,6 @@ func (f *Framer) endWrite() error {
 	if f.logWrites {
 		f.logWrite()
 	}
-
 	n, err := f.w.Write(f.wbuf)
 	if err == nil && n != len(f.wbuf) {
 		err = io.ErrShortWrite

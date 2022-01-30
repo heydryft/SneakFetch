@@ -44,7 +44,7 @@ const (
 	// transportDefaultStreamFlow is how many stream-level flow
 	// control tokens we announce to the peer, and how many bytes
 	// we buffer per stream.
-	transportDefaultStreamFlow = 4 << 20
+	transportDefaultStreamFlow = 6291456 // Control of SETTINGS_INITIAL_WINDOW_SIZE
 
 	// transportDefaultStreamMinRefresh is the minimum number of bytes we'll send
 	// a stream-level WINDOW_UPDATE for at a time.
@@ -98,6 +98,13 @@ type Transport struct {
 	// to mean no limit.
 	MaxHeaderListSize uint32
 
+	// Added for h2 settings frame customization
+	InitialWindowSize    uint32
+	EnablePush           uint32
+	HeaderTableSize      uint32
+	MaxFrameSize         uint32
+	MaxConcurrentStreams uint32
+
 	// StrictMaxConcurrentStreams controls whether the server's
 	// SETTINGS_MAX_CONCURRENT_STREAMS should be respected
 	// globally. If false, new TCP connections are created to the
@@ -132,7 +139,7 @@ type Transport struct {
 
 func (t *Transport) maxHeaderListSize() uint32 {
 	if t.MaxHeaderListSize == 0 {
-		return 10 << 20
+		return 262144 // Control of MAX_HEADER_LIST_SIZE
 	}
 	if t.MaxHeaderListSize == 0xffffffff {
 		return 0
@@ -632,8 +639,8 @@ func (t *Transport) newClientConn(c net.Conn, singleUse bool) (*ClientConn, erro
 		tconn:                 c,
 		readerDone:            make(chan struct{}),
 		nextStreamID:          1,
-		maxFrameSize:          16 << 10,           // spec default
-		initialWindowSize:     65535,              // spec default
+		maxFrameSize:          16384,              // spec default
+		initialWindowSize:     6291456,            // spec default
 		maxConcurrentStreams:  1000,               // "infinite", per spec. 1000 seems good enough.
 		peerMaxHeaderListSize: 0xffffffffffffffff, // "infinite", per spec. Use 2^64-1 instead.
 		streams:               make(map[uint32]*clientStream),
@@ -673,9 +680,29 @@ func (t *Transport) newClientConn(c net.Conn, singleUse bool) (*ClientConn, erro
 		cc.tlsState = &state
 	}
 
+	windowSize := t.InitialWindowSize
+	if windowSize == 0 {
+		windowSize = transportDefaultStreamFlow
+	}
+	headerTableSize := t.HeaderTableSize
+	if headerTableSize == 0 {
+		headerTableSize = 65536
+	}
+	maxConcurrentStreams := t.MaxConcurrentStreams
+	if maxConcurrentStreams == 0 {
+		maxConcurrentStreams = 1000
+	}
+	maxFrameSize := t.MaxFrameSize
+	if maxFrameSize == 0 {
+		maxFrameSize = 16384
+	}
+
 	initialSettings := []Setting{
-		{ID: SettingEnablePush, Val: 0},
-		{ID: SettingInitialWindowSize, Val: transportDefaultStreamFlow},
+		{ID: SettingEnablePush, Val: t.EnablePush},
+		{ID: SettingInitialWindowSize, Val: windowSize},
+		{ID: SettingHeaderTableSize, Val: headerTableSize},
+		{ID: SettingMaxConcurrentStreams, Val: maxConcurrentStreams},
+		{ID: SettingMaxFrameSize, Val: maxFrameSize},
 	}
 	if max := t.maxHeaderListSize(); max != 0 {
 		initialSettings = append(initialSettings, Setting{ID: SettingMaxHeaderListSize, Val: max})
@@ -1500,15 +1527,17 @@ func (cc *ClientConn) encodeHeaders(req *http.Request, addGzipHeader bool, trail
 		// target URI (the path-absolute production and optionally a '?' character
 		// followed by the query production (see Sections 3.3 and 3.4 of
 		// [RFC3986]).
-		f(":authority", host)
 		m := req.Method
 		if m == "" {
 			m = http.MethodGet
 		}
 		f(":method", m)
+
+		f(":authority", host)
+
 		if req.Method != "CONNECT" {
-			f(":path", path)
 			f(":scheme", req.URL.Scheme)
+			f(":path", path)
 		}
 		if trailers != "" {
 			f("trailer", trailers)

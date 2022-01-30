@@ -85,6 +85,7 @@ func (rt *roundTripper) dialTLS(ctx context.Context, network, addr string) (net.
 	}
 
 	conn := utls.UClient(rawConn, &utls.Config{ServerName: host}, rt.clientHelloId)
+
 	if err = conn.Handshake(); err != nil {
 		_ = conn.Close()
 		return nil, err
@@ -99,7 +100,7 @@ func (rt *roundTripper) dialTLS(ctx context.Context, network, addr string) (net.
 	switch conn.ConnectionState().NegotiatedProtocol {
 	case http2.NextProtoTLS:
 		// The remote peer is speaking HTTP 2 + TLS.
-		rt.cachedTransports[addr] = &http2.Transport{DialTLS: rt.dialTLSHTTP2, DisableCompression: true}
+		rt.cachedTransports[addr] = &http2.Transport{DialTLS: rt.dialTLSHTTP2, DisableCompression: true, MaxHeaderListSize: 262144, EnablePush: 1, InitialWindowSize: 6291456, MaxFrameSize: 16384, MaxConcurrentStreams: 1000, HeaderTableSize: 65536}
 	default:
 		// Assume the remote peer is speaking HTTP 1.x + TLS.
 		rt.cachedTransports[addr] = &http.Transport{DialTLSContext: rt.dialTLS, DisableCompression: true}

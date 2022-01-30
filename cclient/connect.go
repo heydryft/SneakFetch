@@ -109,15 +109,18 @@ func (c *connectDialer) DialContext(ctx context.Context, network, address string
 	header := make(http.Header)
 	header["X-Sneak-Method"] = []string{"CONNECT"}
 	header["X-User-Agent"] = []string{c.UserAgent}
+	if len(c.DefaultHeader.Get("Proxy-Authorization")) > 0 {
+		header["X-Proxy-Authorization"] = []string{c.DefaultHeader.Get("Proxy-Authorization")}
+	}
 	req := (&http.Request{
 		Method: "CONNECT",
 		URL:    &url.URL{Host: address},
 		Header: header,
 		Host:   address,
 	}).WithContext(ctx)
-	for k, v := range c.DefaultHeader {
-		req.Header[k] = v
-	}
+	// for k, v := range c.DefaultHeader {
+	// 	req.Header[k] = v
+	// }
 	if ctxHeader, ctxHasHeader := ctx.Value(ContextKeyHeader{}).(http.Header); ctxHasHeader {
 		for k, v := range ctxHeader {
 			req.Header[k] = v
@@ -223,7 +226,6 @@ func (c *connectDialer) DialContext(ctx context.Context, network, address string
 	default:
 		return nil, errors.New("scheme " + c.ProxyUrl.Scheme + " is not supported")
 	}
-
 	switch negotiatedProtocol {
 	case "":
 		fallthrough

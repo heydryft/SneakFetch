@@ -12,7 +12,7 @@ import (
 	"errors"
 	"io"
 	"net"
-	"net/http/internal"
+	"sneakfetch/http/internal"
 	"strings"
 	"testing"
 )

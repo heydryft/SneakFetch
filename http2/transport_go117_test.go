@@ -11,8 +11,8 @@ import (
 	"context"
 	"crypto/tls"
 	"errors"
-	"net/http"
-	"net/http/httptest"
+	"sneakfetch/http"
+	"sneakfetch/http/httptest"
 
 	"testing"
 )
