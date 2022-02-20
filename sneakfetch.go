@@ -294,8 +294,8 @@ var cookieStores = map[string]map[string]kv{}
 var mutex = sync.Mutex{}
 
 func New() Fetcher {
-	id := randStr(32)
 	mutex.Lock()
+	id := randStr(32)
 	cookieStores[id] = map[string]kv{}
 	mutex.Unlock()
 	return Fetcher{
@@ -319,31 +319,39 @@ func (fetcher Fetcher) GetCookie(domain string, name string) string {
 }
 
 func (fetcher Fetcher) SetCookie(domain string, name string, value string) {
+	mutex.Lock()
 	if cookieStores[fetcher.id][domain] == nil {
 		cookieStores[fetcher.id][domain] = kv{}
 	}
 	cookieStores[fetcher.id][domain][name] = value
+	mutex.Unlock()
 }
 
 func (fetcher Fetcher) SetCookies(domain string, cookies kv) {
+	mutex.Lock()
 	if cookieStores[fetcher.id][domain] == nil {
 		cookieStores[fetcher.id][domain] = kv{}
 	}
 	for k, v := range cookies {
 		cookieStores[fetcher.id][domain][k] = v
 	}
+	mutex.Unlock()
 }
 
 func (fetcher Fetcher) DeleteCookies(domain string) {
+	mutex.Lock()
 	if cookieStores[fetcher.id][domain] != nil {
 		cookieStores[fetcher.id][domain] = kv{}
 	}
+	mutex.Unlock()
 }
 
 func (fetcher Fetcher) DeleteCookie(domain string, name string) {
+	mutex.Lock()
 	if cookieStores[fetcher.id][domain] != nil && len(cookieStores[fetcher.id][domain][name]) > 0 {
 		delete(cookieStores[fetcher.id][domain], name)
 	}
+	mutex.Unlock()
 }
 
 func cookiesToHeader(cookies kv) string {
@@ -358,7 +366,9 @@ func headerToCookies(header []string) kv {
 	cookies := kv{}
 	for _, s := range header {
 		arr := strings.SplitN(strings.Split(s, ";")[0], "=", 2)
+		mutex.Lock()
 		cookies[arr[0]] = arr[1]
+		mutex.Unlock()
 	}
 	return cookies
 }
@@ -486,13 +496,13 @@ func (fetcher Fetcher) Get(requestURL string, options RequestOptions) Response {
 		userAgent = defaultUserAgent
 	}
 
+	mutex.Lock()
 	if len(options.Proxy) != 0 {
 		client, err = cclient.NewClient(clientHelloID, userAgent, options.Proxy)
 	} else {
 		client, err = cclient.NewClient(clientHelloID, userAgent)
 	}
 
-	mutex.Lock()
 	if len(fetcher.GetCookies(getDomain(requestURL))) != 0 {
 		options.Headers["Cookie"] = []string{cookiesToHeader(fetcher.GetCookies(getDomain(requestURL)))}
 	}
@@ -513,7 +523,9 @@ func (fetcher Fetcher) Get(requestURL string, options RequestOptions) Response {
 		options.Headers = http.Header{}
 	}
 
+	mutex.Lock()
 	options.Headers = setChromeHeaders(options.Headers)
+	mutex.Unlock()
 
 	resp, err := client.Do(&http.Request{
 		URL:    reqURL,

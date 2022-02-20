@@ -103,15 +103,19 @@ func (c *connectDialer) Dial(network, address string) (net.Conn, error) {
 // Users of context.WithValue should define their own types for keys
 type ContextKeyHeader struct{}
 
+var mutex = sync.Mutex{}
+
 // ctx.Value will be inspected for optional ContextKeyHeader{} key, with `http.Header` value,
 // which will be added to outgoing request headers, overriding any colliding c.DefaultHeader
 func (c *connectDialer) DialContext(ctx context.Context, network, address string) (net.Conn, error) {
 	header := make(http.Header)
+	mutex.Lock()
 	header["X-Sneak-Method"] = []string{"CONNECT"}
 	header["X-User-Agent"] = []string{c.UserAgent}
 	if len(c.DefaultHeader.Get("Proxy-Authorization")) > 0 {
 		header["X-Proxy-Authorization"] = []string{c.DefaultHeader.Get("Proxy-Authorization")}
 	}
+	mutex.Unlock()
 	req := (&http.Request{
 		Method: "CONNECT",
 		URL:    &url.URL{Host: address},
@@ -121,11 +125,13 @@ func (c *connectDialer) DialContext(ctx context.Context, network, address string
 	// for k, v := range c.DefaultHeader {
 	// 	req.Header[k] = v
 	// }
+	mutex.Lock()
 	if ctxHeader, ctxHasHeader := ctx.Value(ContextKeyHeader{}).(http.Header); ctxHasHeader {
 		for k, v := range ctxHeader {
 			req.Header[k] = v
 		}
 	}
+	mutex.Unlock()
 
 	connectHttp2 := func(rawConn net.Conn, h2clientConn *http2.ClientConn) (net.Conn, error) {
 		req.Proto = "HTTP/2.0"

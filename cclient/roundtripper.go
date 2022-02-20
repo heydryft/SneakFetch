@@ -43,7 +43,9 @@ func (rt *roundTripper) RoundTrip(req *http.Request) (*http.Response, error) {
 func (rt *roundTripper) getTransport(req *http.Request, addr string) error {
 	switch strings.ToLower(req.URL.Scheme) {
 	case "http":
+		mutex.Lock()
 		rt.cachedTransports[addr] = &http.Transport{DialContext: rt.dialer.DialContext, DisableCompression: true}
+		mutex.Unlock()
 		return nil
 	case "https":
 	default:
@@ -100,15 +102,21 @@ func (rt *roundTripper) dialTLS(ctx context.Context, network, addr string) (net.
 	switch conn.ConnectionState().NegotiatedProtocol {
 	case http2.NextProtoTLS:
 		// The remote peer is speaking HTTP 2 + TLS.
+		mutex.Lock()
 		rt.cachedTransports[addr] = &http2.Transport{DialTLS: rt.dialTLSHTTP2, DisableCompression: true, MaxHeaderListSize: 262144, EnablePush: 1, InitialWindowSize: 6291456, MaxFrameSize: 16384, MaxConcurrentStreams: 1000, HeaderTableSize: 65536}
+		mutex.Unlock()
 	default:
 		// Assume the remote peer is speaking HTTP 1.x + TLS.
+		mutex.Lock()
 		rt.cachedTransports[addr] = &http.Transport{DialTLSContext: rt.dialTLS, DisableCompression: true}
+		mutex.Unlock()
 	}
 
 	// Stash the connection just established for use servicing the
 	// actual request (should be near-immediate).
+	mutex.Lock()
 	rt.cachedConnections[addr] = conn
+	mutex.Unlock()
 
 	return nil, errProtocolNegotiated
 }
