@@ -8,7 +8,8 @@ package httputil
 
 import (
 	"io"
-	"sneakfetch/http/internal"
+
+	"github.com/Jishrocks/SneakFetch/http/internal"
 )
 
 // NewChunkedReader returns a new chunkedReader that translates the data read from r

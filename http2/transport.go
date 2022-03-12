@@ -22,14 +22,15 @@ import (
 	mathrand "math/rand"
 	"net"
 	"net/textproto"
-	"sneakfetch/http"
-	"sneakfetch/http/httptrace"
 	"sort"
 	"strconv"
 	"strings"
 	"sync"
 	"sync/atomic"
 	"time"
+
+	"github.com/Jishrocks/SneakFetch/http"
+	"github.com/Jishrocks/SneakFetch/http/httptrace"
 
 	"golang.org/x/net/http/httpguts"
 	"golang.org/x/net/http2/hpack"

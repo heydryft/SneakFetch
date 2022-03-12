@@ -12,13 +12,14 @@ import (
 	"io"
 	"net/textproto"
 	"reflect"
-	"sneakfetch/http/httptrace"
-	"sneakfetch/http/internal"
 	"sort"
 	"strconv"
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/Jishrocks/SneakFetch/http/httptrace"
+	"github.com/Jishrocks/SneakFetch/http/internal"
 
 	"golang.org/x/net/http/httpguts"
 )

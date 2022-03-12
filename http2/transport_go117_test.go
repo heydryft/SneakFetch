@@ -11,8 +11,9 @@ import (
 	"context"
 	"crypto/tls"
 	"errors"
-	"sneakfetch/http"
-	"sneakfetch/http/httptest"
+
+	"github.com/Jishrocks/SneakFetch/http"
+	"github.com/Jishrocks/SneakFetch/http/httptest"
 
 	"testing"
 )

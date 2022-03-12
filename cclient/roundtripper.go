@@ -6,15 +6,16 @@ import (
 	"errors"
 	"fmt"
 	"net"
-	"sneakfetch/http"
 	"strings"
 	"sync"
 
-	"sneakfetch/http2"
+	"github.com/Jishrocks/SneakFetch/http"
 
-	"sneakfetch/proxy"
+	"github.com/Jishrocks/SneakFetch/http2"
 
-	utls "sneakfetch/utls"
+	"github.com/Jishrocks/SneakFetch/proxy"
+
+	utls "github.com/Jishrocks/SneakFetch/utls"
 )
 
 var errProtocolNegotiated = errors.New("protocol negotiated")

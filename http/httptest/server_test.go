@@ -8,8 +8,9 @@ import (
 	"bufio"
 	"io"
 	"net"
-	"sneakfetch/http"
 	"testing"
+
+	"github.com/Jishrocks/SneakFetch/http"
 )
 
 type newServerFunc func(http.Handler) *Server

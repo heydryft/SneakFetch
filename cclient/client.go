@@ -1,11 +1,11 @@
 package cclient
 
 import (
-	"sneakfetch/http"
+	"github.com/Jishrocks/SneakFetch/http"
 
 	"golang.org/x/net/proxy"
 
-	utls "sneakfetch/utls"
+	utls "github.com/Jishrocks/SneakFetch/utls"
 )
 
 func NewClient(clientHello utls.ClientHelloID, userAgent string, proxyUrl ...string) (http.Client, error) {

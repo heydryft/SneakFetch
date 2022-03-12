@@ -20,7 +20,7 @@ import (
 	"sync"
 	"time"
 
-	"sneakfetch/utls/cpu"
+	"github.com/Jishrocks/SneakFetch/utls/cpu"
 )
 
 const (

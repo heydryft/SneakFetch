@@ -10,12 +10,13 @@ import (
 	"log"
 	"math/rand"
 	"net/url"
-	"sneakfetch/cclient"
-	"sneakfetch/config"
-	"sneakfetch/http"
-	tls "sneakfetch/utls"
 	"strings"
 	"sync"
+
+	"github.com/Jishrocks/SneakFetch/cclient"
+	"github.com/Jishrocks/SneakFetch/config"
+	"github.com/Jishrocks/SneakFetch/http"
+	tls "github.com/Jishrocks/SneakFetch/utls"
 
 	"github.com/dsnet/compress/brotli"
 )

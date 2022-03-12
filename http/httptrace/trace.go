@@ -12,8 +12,9 @@ import (
 	"net"
 	"net/textproto"
 	"reflect"
-	"sneakfetch/nettrace"
 	"time"
+
+	"github.com/Jishrocks/SneakFetch/nettrace"
 )
 
 // unique type to prevent assignment.

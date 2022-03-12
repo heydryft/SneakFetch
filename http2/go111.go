@@ -9,7 +9,8 @@ package http2
 
 import (
 	"net/textproto"
-	"sneakfetch/http/httptrace"
+
+	"github.com/Jishrocks/SneakFetch/http/httptrace"
 )
 
 func traceHasWroteHeaderField(trace *httptrace.ClientTrace) bool {

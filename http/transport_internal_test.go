@@ -12,9 +12,10 @@ import (
 	"errors"
 	"io"
 	"net"
-	"sneakfetch/http/internal"
 	"strings"
 	"testing"
+
+	"github.com/Jishrocks/SneakFetch/http/internal"
 )
 
 // Issue 15446: incorrect wrapping of errors when server closes an idle connection.

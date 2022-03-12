@@ -10,11 +10,12 @@ import (
 	"fmt"
 	"net"
 	"net/url"
-	"sneakfetch/http"
 	"sort"
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/Jishrocks/SneakFetch/http"
 )
 
 // PublicSuffixList provides the public suffix of a domain. For example:

@@ -10,8 +10,9 @@ import (
 	"context"
 	"crypto/tls"
 	"errors"
-	"sneakfetch/http"
 	"sync"
+
+	"github.com/Jishrocks/SneakFetch/http"
 )
 
 // ClientConnPool manages a pool of HTTP/2 client connections.

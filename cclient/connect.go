@@ -24,12 +24,13 @@ import (
 	"io"
 	"net"
 	"net/url"
-	"sneakfetch/http"
 	"sync"
+
+	"github.com/Jishrocks/SneakFetch/http"
 
 	"golang.org/x/net/proxy"
 
-	"sneakfetch/http2"
+	"github.com/Jishrocks/SneakFetch/http2"
 )
 
 // connectDialer allows to configure one-time use HTTP CONNECT client

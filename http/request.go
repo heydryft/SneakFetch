@@ -21,10 +21,11 @@ import (
 	"net/textproto"
 	"net/url"
 	urlpkg "net/url"
-	"sneakfetch/http/httptrace"
 	"strconv"
 	"strings"
 	"sync"
+
+	"github.com/Jishrocks/SneakFetch/http/httptrace"
 
 	"golang.org/x/net/idna"
 )

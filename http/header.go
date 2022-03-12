@@ -8,12 +8,13 @@ import (
 	"io"
 	"math/rand"
 	"net/textproto"
-	"sneakfetch/config"
-	"sneakfetch/http/httptrace"
 	"sort"
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/Jishrocks/SneakFetch/config"
+	"github.com/Jishrocks/SneakFetch/http/httptrace"
 )
 
 // A Header represents the key-value pairs in an HTTP header.

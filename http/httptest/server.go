@@ -14,11 +14,12 @@ import (
 	"log"
 	"net"
 	"os"
-	"sneakfetch/http"
-	"sneakfetch/http/internal"
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/Jishrocks/SneakFetch/http"
+	"github.com/Jishrocks/SneakFetch/http/internal"
 )
 
 // A Server is an HTTP server listening on a system-chosen port on the
