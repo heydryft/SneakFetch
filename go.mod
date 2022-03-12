@@ -1,4 +1,4 @@
-module sneakfetch
+module github.com/Jishrocks/SneakFetch
 
 go 1.17
 
